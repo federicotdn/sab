@@ -1,23 +1,32 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BoxBlock : LevelBlock {
 
     public Collider solidCollider;
-    public Rigidbody body;
+    public float minPushSpeed = 0.1f;
 
+    private Rigidbody body;
     private bool busy = false;
     private bool falling = false;
 
+    void Start() {
+        body = GetComponent<Rigidbody>();
+    }
+
     void Update() {
         if (falling) {
-            LevelBlock block = GetBlockAt(new Vector3(0, -1, 0));
+            LevelBlock block = GetBlockAt(GameController.Instance.GravityDirection);
             if (block != null) {
                 solidCollider.enabled = true;
                 falling = false;
             }
         }
+    }
+
+    public void Freeze() {
+        busy = true;
+        body.isKinematic = true;
     }
 
     void OnTriggerEnter(Collider other) {
@@ -26,11 +35,10 @@ public class BoxBlock : LevelBlock {
         }
 
         SphereController sphere = other.transform.parent.GetComponent<SphereController>();
-        if (sphere == null) {
+
+        if (sphere == null || sphere.SphereBody.velocity.magnitude < minPushSpeed) {
             return;
         }
-
-        Debug.Log("Bumperino");
 
         sphere.SphereBody.velocity = new Vector3();
         sphere.SphereBody.angularVelocity = new Vector3();
@@ -51,10 +59,7 @@ public class BoxBlock : LevelBlock {
             pushDirection.x = 0;
         }
 
-        Debug.Log(pushDirection);
-
         LevelBlock next = GetBlockAt(pushDirection);
-        Debug.Log(next != null ? "block present" : "nothing");
 
         if (next == null) {
             // Clear to move in push direction
@@ -85,20 +90,25 @@ public class BoxBlock : LevelBlock {
             float x = Mathf.Lerp(start.x, finish.x, (elapsedTime / time));
             float z = Mathf.Lerp(start.z, finish.z, (elapsedTime / time));
             transform.position = new Vector3(x, transform.position.y, z);
-            Debug.Log(transform.position);
 
             elapsedTime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
 
-        LevelBlock block = GetBlockAt(new Vector3(0, -1, 0));
+        LevelBlock block = GetBlockAt(GameController.Instance.GravityDirection);
         if (block == null) {
             // Nothing underneath us, disable solid collider so we can fall
-            falling = true;
-            solidCollider.enabled = false;
+            StartFalling();
         }
 
-        busy = false;
+        if (!body.isKinematic) {
+            busy = false;
+        }
+    }
+
+    public void StartFalling() {
+        falling = true;
+        solidCollider.enabled = false;
     }
 
     IEnumerator WaitFor(float time) {

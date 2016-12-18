@@ -15,6 +15,8 @@ public class SphereController : MonoBehaviour {
     public float movementSpeed = 1f;
     public float cameraMoveSpeed = 3f;
 
+    private bool movementEnabled = true;
+
 	// Use this for initialization
 	void Start () {
         sphereBody = GetComponentInChildren<Rigidbody>();
@@ -29,7 +31,7 @@ public class SphereController : MonoBehaviour {
         if (vert != 0 || hor != 0) {
             if (Input.GetKey(KeyCode.LeftControl)) {
                 cameraAxis.Rotate(new Vector3(0, hor * cameraMoveSpeed, 0));
-            } else {
+            } else if (movementEnabled) {
                 float moveHorizontal = hor * movementSpeed;
                 float moveVertical = vert * movementSpeed;
                 Vector3 movement = sphereCamera.transform.TransformDirection(new Vector3(moveHorizontal, 0.0f, moveVertical));
@@ -40,4 +42,14 @@ public class SphereController : MonoBehaviour {
 
         cameraAxis.position = sphereBody.transform.position;
 	}
+
+    public void DisableMovementFor(float seconds) {
+        StartCoroutine(DisableMovement(seconds));
+    }
+
+    IEnumerator DisableMovement(float time) {
+        movementEnabled = false;
+        yield return new WaitForSeconds(time);
+        movementEnabled = true;
+    }
 }
