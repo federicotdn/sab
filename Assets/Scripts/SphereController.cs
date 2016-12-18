@@ -7,6 +7,10 @@ public class SphereController : MonoBehaviour {
     private Rigidbody sphereBody;
     private Camera sphereCamera;
 
+    public Rigidbody SphereBody {
+        get { return sphereBody; }
+    }
+
     public Transform cameraAxis;
     public float movementSpeed = 1f;
     public float cameraMoveSpeed = 3f;
@@ -34,6 +38,6 @@ public class SphereController : MonoBehaviour {
             }
         }
 
-        transform.position = sphereBody.transform.position;
+        cameraAxis.position = sphereBody.transform.position;
 	}
 }
