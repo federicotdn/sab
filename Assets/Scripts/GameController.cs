@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
     private const float gravityConst = 9.81f;
+
+    public GameObject gameOverPanel;
+    public GameObject gameWonPanel;
 
     public Vector3 GravityDirection {
         set {
@@ -35,16 +39,27 @@ public class GameController : MonoBehaviour {
         }
     }
 
-	// Use this for initialization
-	void Start () {	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void OnLost() {
+        gameOverPanel.SetActive(true);
+    }
+
+    public void OnRestartPressed() {
+        SceneManager.LoadScene("Level01");
+    }
+
+    public void OnMenuPressed() {
+        SceneManager.LoadScene("Menu");
+    }
 
     public void CheckVictory() {
+        GoalBlock[] goals = FindObjectsOfType<GoalBlock>();
+        foreach (GoalBlock goal in goals) {
+            if (!goal.Activated) {
+                return;
+            }
+        }
 
+        FindObjectOfType<SphereController>().Freeze();
+        gameWonPanel.SetActive(true);
     }
 }

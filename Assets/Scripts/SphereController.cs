@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class SphereController : MonoBehaviour {
 
+    private const float MAX_CENTER_DISTANCE = 30.0f;
+
     private Rigidbody sphereBody;
     private Camera sphereCamera;
+    private bool dead = false;
 
     public Rigidbody SphereBody {
         get { return sphereBody; }
@@ -25,6 +28,10 @@ public class SphereController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (dead) {
+            return;
+        }
+
         float hor = Input.GetAxisRaw("Horizontal");
         float vert = Input.GetAxisRaw("Vertical");
 
@@ -41,7 +48,17 @@ public class SphereController : MonoBehaviour {
         }
 
         cameraAxis.position = sphereBody.transform.position;
+
+        if (sphereBody.transform.position.magnitude > MAX_CENTER_DISTANCE) {
+            Freeze();
+            dead = true;
+            GameController.Instance.OnLost();
+        }
 	}
+
+    public void Freeze() {
+        sphereBody.isKinematic = true;
+    }
 
     public void DisableMovementFor(float seconds) {
         StartCoroutine(DisableMovement(seconds));
