@@ -17,6 +17,7 @@ public class SphereController : MonoBehaviour {
     public Transform cameraAxis;
     public float movementSpeed = 1f;
     public float cameraMoveSpeed = 3f;
+    public GameObject sphereObject;
 
     private bool movementEnabled = true;
 
@@ -61,12 +62,14 @@ public class SphereController : MonoBehaviour {
     }
 
     public void DisableMovementFor(float seconds) {
-        StartCoroutine(DisableMovement(seconds));
+        StartCoroutine(HideFor(seconds));
     }
 
-    IEnumerator DisableMovement(float time) {
+    IEnumerator HideFor(float time) {
         movementEnabled = false;
+        sphereObject.SetActive(false);
         yield return new WaitForSeconds(time);
+        sphereObject.SetActive(true);
         movementEnabled = true;
     }
 }

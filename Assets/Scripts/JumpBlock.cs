@@ -18,7 +18,6 @@ public class JumpBlock : LevelBlock {
         }
 
         sphere.SphereBody.AddForce(new Vector3(0, boostStrength, 0));
-        Debug.Log("boost");
         StartCoroutine(WaitFor(2));
     }
 

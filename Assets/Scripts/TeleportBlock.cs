@@ -43,7 +43,6 @@ public class TeleportBlock : LevelBlock {
         sphere.DisableMovementFor(3);
         exitBlock.OnTeleportedTo();
 
-        Debug.Log("teleport");
         StartCoroutine(WaitFor(2));
     }
 
