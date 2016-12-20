@@ -18,7 +18,7 @@ public class JumpBlock : LevelBlock {
         }
 
         sphere.SphereBody.AddForce(new Vector3(0, boostStrength, 0));
-        StartCoroutine(WaitFor(2));
+        StartCoroutine(WaitFor(0.5f));
     }
 
     IEnumerator WaitFor(float time) {
